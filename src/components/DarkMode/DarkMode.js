@@ -1,42 +1,76 @@
-import React from "react";
-import { ReactComponent as Sun } from "./Sun.svg";
-import { ReactComponent as Moon } from "./Moon.svg";
+import React, { useEffect, useState } from "react";
 import "./DarkMode.css";
 
 const DarkMode = () => {
-    const setDarkMode = () =>{
-        document.querySelector("body").setAttribute('data-theme','dark');
-        localStorage.setItem("selectedTheme","dark")
-    };
-    const setLightMode = () =>{
-        document.querySelector("body").setAttribute('data-theme','light');
-        localStorage.setItem("selectedTheme","light")
-    };
-    const hours = new Date().getHours();
-    
-    const selectedTheme = localStorage.getItem("selectedTheme");
-    if(selectedTheme === "dark" || (hours > 21 && hours < 7) ){
-        setDarkMode();
-    }
-    const toggleTheme = e =>{
-        if(e.target.checked) setDarkMode();
-        else setLightMode();
-    }
-    return (
-        <div className='dark_mode'>
-            <input
-                className='dark_mode_input'
-                type='checkbox'
-                id='darkmode-toggle'
-                onChange={toggleTheme}
-                defaultChecked={selectedTheme === "dark"}
-            />
-            <label className='dark_mode_label' htmlFor='darkmode-toggle'>
-                <Sun />
-                <Moon />
-            </label>
-        </div>
-    );
+  const storageKey = "selectedTheme";
+
+  // State to track current theme
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
+
+  // Reflect theme in DOM & localStorage
+  const applyTheme = (newTheme) => {
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem(storageKey, newTheme);
+    setTheme(newTheme);
+  };
+
+  const toggleTheme = () => {
+    applyTheme(theme === "light" ? "dark" : "light");
+  };
+
+  // Sync with system preference changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e) => applyTheme(e.matches ? "dark" : "light");
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
+  return (
+    <button
+      className="theme-toggle"
+      onClick={toggleTheme}
+      aria-label="Toggle light & dark"
+      id="theme-toggle"
+    >
+      <svg
+        className="sun-and-moon"
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <mask className="moon" id="moon-mask">
+          <rect x="0" y="0" width="100%" height="100%" fill="white" />
+          <circle cx="24" cy="10" r="6" fill="black" />
+        </mask>
+        <circle
+          className="sun"
+          cx="12"
+          cy="12"
+          r="6"
+          mask="url(#moon-mask)"
+          fill="currentColor"
+        />
+        <g className="sun-beams" stroke="currentColor">
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </g>
+      </svg>
+    </button>
+  );
 };
 
 export default DarkMode;
