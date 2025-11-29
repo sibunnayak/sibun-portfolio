@@ -19,6 +19,7 @@
   --border:2px solid rgba(0, 0, 0, 0.3);
   --bg-color: rgba(0, 0, 0, 0.5);
   --border-top:1px solid rgba(0, 0, 0, 0.3);
+  --link-color: hsl(var(--hue), var(--sat), 45%);
   /*========== Font and typography ==========*/
   --body-font: "Poppins", sans-serif;
 

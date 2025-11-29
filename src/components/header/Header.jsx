@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import "./header.css";
 import DarkMode from '../DarkMode/DarkMode';
 // import logo from "../../assets/logo.png";
@@ -8,6 +8,21 @@ export const Header = () => {
         if(this.scrollY >=80) header.classList.add ("scroll-header");
         else header.classList.remove("scroll-header");
     })
+    document.addEventListener("DOMContentLoaded", () => {
+    const selectedTheme = localStorage.getItem("selectedTheme"); // "light" or "dark"
+    const logoText = document.querySelector(".logo-text");
+
+    if (!logoText) return; // safety check
+
+    if (selectedTheme === "dark") {
+        logoText.classList.remove("light");
+        logoText.classList.add("dark");
+    } else {
+        logoText.classList.remove("dark");
+        logoText.classList.add("light");
+    }
+});
+
 
     // *******Toggle Menu **************
     const[Toggle,ShowMenu] = useState(false);

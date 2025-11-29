@@ -45,7 +45,7 @@
 /* Active link */
 .active-link,
 .nav__link:hover {
-    color: yellowgreen;
+    color: var(--link-color);
 }
 
 /* Break POINTS */
@@ -127,40 +127,60 @@
     font-family: "Audiowide", sans-serif;
     font-size: 1rem;
     font-weight: 400;
-    color: hsl(var(--hue), var(--sat), 20%);
     position: relative;
     overflow: hidden;
     display: inline-block;
     cursor: pointer;
     letter-spacing: 1.5px;
+    transition: color 0.3s ease;
+    z-index: 1;
 }
 
-/* Shine line effect */
+/* Light theme text */
+.logo-text.light {
+    color: hsl(var(--hue), var(--sat), 20%);
+}
+
+/* Dark theme text */
+.logo-text.dark {
+    color: hsl(var(--hue), var(--sat), 90%);
+}
+
+/* Shine effect */
 .logo-text::after {
     content: "";
     position: absolute;
     top: 0;
-    left: -120%;
-    width: 60%;
+    left: -150%;
+    width: 50%;
     height: 100%;
+    transform: skewX(-25deg);
+    animation: shineMove 2.2s linear infinite;
+
+    /* Make shine visible on any background */
     background: linear-gradient(
         120deg,
         transparent 0%,
-        rgba(255,255,255,0.9) 50%,
+        rgba(255, 255, 255, 0.8) 50%,
         transparent 100%
     );
-    transform: skewX(-30deg);
-    animation: shineMove 2.2s ease-in-out infinite;
+    z-index: 2;
+
+    /* Optional: blend to make shine pop over dark text */
+    mix-blend-mode: screen;
+}
+
+.logo-text.dark::after {
+    /* Same gradient works with mix-blend-mode for dark */
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        transparent 100%
+    );
 }
 
 @keyframes shineMove {
-    0% {
-        left: -120%;
-    }
-    60% {
-        left: 140%;
-    }
-    100% {
-        left: 140%;
-    }
+    0% { left: -150%; }
+    100% { left: 150%; }
 }
